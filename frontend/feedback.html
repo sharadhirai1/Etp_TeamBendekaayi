@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Feedback</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+    .container { max-width: 400px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0px 4px 6px rgba(0,0,0,0.1); }
+    select, textarea, button { width: 100%; padding: 10px; margin: 8px 0; border-radius: 4px; border: 1px solid #ccc; }
+    button { background: #28a745; color: white; border: none; cursor: pointer; }
+    button:hover { background: #218838; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Submit Feedback</h2>
+    <label>Mood</label>
+    <select id="mood">
+      <option value="Fine">Fine</option>
+      <option value="Tired">Tired</option>
+      <option value="Stressed">Stressed</option>
+    </select>
+    <label>Note</label>
+    <textarea id="note" rows="4" placeholder="Optional note"></textarea>
+    <button onclick="submitFeedback()">Submit</button>
+  </div>
+
+  <script>
+    const API_URL = "http://localhost:5000";
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    async function submitFeedback() {
+      const mood = document.getElementById("mood").value;
+      const note = document.getElementById("note").value;
+
+      const res = await fetch(`${API_URL}/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ studentId: user.id, mood, note })
+      });
+      alert((await res.json()).message);
+    }
+  </script>
+</body>
+</html>

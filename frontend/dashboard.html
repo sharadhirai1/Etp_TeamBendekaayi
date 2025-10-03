@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Teacher Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+    th { background: #007bff; color: white; }
+  </style>
+</head>
+<body>
+  <h2>All Student Feedback</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Mood</th>
+        <th>Note</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody id="feedbackTable"></tbody>
+  </table>
+
+  <script>
+    const API_URL = "http://localhost:5000";
+
+    async function loadFeedback() {
+      const res = await fetch(`${API_URL}/feedback`);
+      const data = await res.json();
+
+      const table = document.getElementById("feedbackTable");
+      table.innerHTML = "";
+
+      data.forEach(fb => {
+        const row = `<tr>
+          <td>${fb.studentId?.name || "Unknown"}</td>
+          <td>${fb.mood}</td>
+          <td>${fb.note || "-"}</td>
+          <td>${new Date(fb.date).toLocaleString()}</td>
+        </tr>`;
+        table.innerHTML += row;
+      });
+    }
+
+    loadFeedback();
+  </script>
+</body>
+</html>
