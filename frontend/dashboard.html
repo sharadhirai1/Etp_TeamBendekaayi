@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard | Student Wellbeing Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #3b82f6, #22d3ee, #10b981);
+      background-size: 300% 300%;
+      animation: gradient 8s infinite alternate;
+      text-align: center;
+      color: white;
+      padding: 40px;
+    }
+
+    @keyframes gradient {
+      0% { background-position: left; }
+      100% { background-position: right; }
+    }
+
+    canvas {
+      max-width: 500px;
+      margin-top: 50px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 Student Wellbeing Reports</h1>
+  <canvas id="chart"></canvas>
+
+  <script>
+    const API = "http://localhost:5000";
+
+    async function loadStats(){
+      const res = await fetch($,{API}/api/stats);
+      const data = await res.json();
+      const ctx = document.getElementById("chart");
+      new Chart(ctx, {
+        type: 'pie',
+        data: {
+          labels: Object.keys(data),
+          datasets: [{ data: Object.values(data) }]
+        },
+        options: { plugins: { legend: { labels: { color: 'white' } } } }
+      });
+    }
+
+    loadStats();
+  </script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Messages | Student Wellbeing Tracker</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #60a5fa, #9333ea, #ec4899);
+      background-size: 300% 300%;
+      animation: move 10s infinite alternate;
+      color: white;
+      text-align: center;
+      padding: 30px;
+    }
+
+    @keyframes move {
+      0% { background-position: left; }
+      100% { background-position: right; }
+    }
+
+    select, textarea, button {
+      width: 80%;
+      margin: 10px auto;
+      display: block;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    button {
+      background: white;
+      color: #9333ea;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #f0f9ff;
+    }
+
+    .chat {
+      background: rgba(255,255,255,0.2);
+      padding: 20px;
+      margin-top: 30px;
+      border-radius: 10px;
+      text-align: left;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 300px;
+      overflow-y: auto;
+    }
+
+    .msg {
+      background: rgba(255,255,255,0.3);
+      padding: 10px;
+      border-radius: 8px;
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>💬 Messages</h1>
+  <select id="recipient"></select>
+  <textarea id="messageText" placeholder="Type your message..."></textarea>
+  <button onclick="sendMessage()">Send</button>
+
+  <div class="chat" id="chatBox"></div>
+
+  <script>
+    const API = "http://localhost:5000";
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    async function loadUsers() {
+      const res = await fetch($,{API}/api/users);
+      const users = await res.json();
+      const select = document.getElementById("recipient");
+      users.filter(u => u._id !== user.id).forEach(u => {
+        const opt = document.createElement("option");
+        opt.value = u._id;
+        opt.textContent = u.name + (u.isTeacher ? " (Teacher)" : " (Student)");
+        select.appendChild(opt);
+      });
+    }
+
+    async function sendMessage() {
+      const toId = document.getElementById("recipient").value;
+      const text = document.getElementById("messageText").value;
+      const res = await fetch($,{API}/api/message, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fromId: user.id, toId, text })
+      });
+      const data = await res.json();
+      alert(data.message || data.error);
+      document.getElementById("messageText").value = "";
+      loadMessages();
+    }
+
+    async function loadMessages() {
+      const toId = document.getElementById("recipient").value;
+      if (!toId) return;
+      const res = await fetch($,{API}/api/messages/$,{user,id}/$,{toId});
+      const msgs = await res.json();
+      const box = document.getElementById("chatBox");
+      box.innerHTML = "";
+      msgs.forEach(m => {
+        const div = document.createElement("div");
+        div.className = "msg";
+        div.textContent = $,{m,from,name}; $:{m.text};
+        box.appendChild(div);
+      });
+    }
+
+    document.getElementById("recipient").addEventListener("change", loadMessages);
+    loadUsers();
+  </script>
+</body>
+</html>
